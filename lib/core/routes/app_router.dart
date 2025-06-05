@@ -5,6 +5,11 @@ import '../../features/splash/presentation/screens/splash_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
+final _slideTransitionTween = Tween<Offset>(
+  begin: const Offset(0.0, 1.0),
+  end: Offset.zero,
+);
+
 final GoRouter routerConfig = GoRouter(
   navigatorKey: _rootNavigatorKey,
   initialLocation: "/splash",
@@ -15,19 +20,23 @@ final GoRouter routerConfig = GoRouter(
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
         child: const SplashScreen(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return SlideTransition(
-            position:
-                Tween<Offset>(
-                  begin: const Offset(0.0, 1.0),
-                  end: Offset.zero,
-                ).animate(
-                  CurvedAnimation(parent: animation, curve: Curves.easeInOut),
-                ),
-            child: child,
-          );
-        },
+        transitionsBuilder: _buildSlideTransition,
       ),
     ),
   ],
 );
+
+Widget _buildSlideTransition(
+  BuildContext context,
+  Animation<double> animation,
+  Animation<double> secondaryAnimation,
+  Widget child,
+) {
+  return SlideTransition(
+    position: _slideTransitionTween.animate(CurvedAnimation(
+      parent: animation,
+      curve: Curves.easeInOut,
+    )),
+    child: child,
+  );
+}

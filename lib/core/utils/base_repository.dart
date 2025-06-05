@@ -10,8 +10,8 @@ abstract class BaseRepository {
     required Future<T> Function() request,
   }) async {
     try {
-      final response = await request();
-      return DataSuccess(response);
+      final result = await request();
+      return DataSuccess(result);
     } on AppException {
       rethrow;
     } catch (error) {
@@ -23,7 +23,7 @@ abstract class BaseRepository {
   }
 
   @protected
-  Map<String, dynamic> get getQueryParams => {
+  Map<String, dynamic> get getQueryParams => <String, dynamic>{
     AppConstants.queryTimestamp: DateTime.now().millisecondsSinceEpoch.toString(),
   };
 }

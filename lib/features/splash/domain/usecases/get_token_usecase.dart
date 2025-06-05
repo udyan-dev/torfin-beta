@@ -8,14 +8,14 @@ import '../../../../shared/services/storage_service.dart';
 import '../repositories/token_repository.dart';
 
 class GetTokenUseCase extends BaseUseCase<String, NoParams> {
-  final TokenRepository _tokenRepository;
-  final StorageService _storageService;
-
   GetTokenUseCase({
     required TokenRepository tokenRepository,
     required StorageService storageService,
   }) : _tokenRepository = tokenRepository,
        _storageService = storageService;
+
+  final TokenRepository _tokenRepository;
+  final StorageService _storageService;
 
   @override
   Future<DataState<String>> call(
@@ -23,14 +23,12 @@ class GetTokenUseCase extends BaseUseCase<String, NoParams> {
     required CancelToken cancelToken,
   }) async {
     try {
-      await _clearExistingToken();
+      await _storageService.clearToken();
 
-      final result = await _tokenRepository.getApiToken(
-        cancelToken: cancelToken,
-      );
+      final result = await _tokenRepository.getApiToken(cancelToken: cancelToken);
 
-      if (isSuccess(result) && result.data != null) {
-        await _storeToken(result.data!);
+      if (result is DataSuccess<String> && result.data != null) {
+        await _storageService.setToken(result.data!);
       }
 
       return result;
@@ -42,13 +40,5 @@ class GetTokenUseCase extends BaseUseCase<String, NoParams> {
         message: '${AppConstants.getTokenError}: ${e.toString()}',
       );
     }
-  }
-
-  Future<void> _clearExistingToken() async {
-    await _storageService.setToken(AppConstants.emptyString);
-  }
-
-  Future<void> _storeToken(String token) async {
-    await _storageService.setToken(token);
   }
 }

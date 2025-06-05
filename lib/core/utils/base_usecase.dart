@@ -8,9 +8,8 @@ abstract class BaseUseCase<Type, Param> {
     required CancelToken cancelToken,
   });
 
-  bool isSuccess<T>(DataState<T> response) {
-    return response is DataSuccess;
-  }
+  @pragma('vm:prefer-inline')
+  bool isSuccess<T>(DataState<T> response) => response is DataSuccess;
 }
 
 class NoParams {}

@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'data_state.dart';
@@ -6,24 +5,23 @@ import 'data_state.dart';
 abstract class BaseCubit<State> extends Cubit<State> {
   BaseCubit(super.initialState);
 
+  bool _isClosed = false;
+
   @override
   Future<void> close() async {
+    if (_isClosed) return;
+    _isClosed = true;
     await closeToken();
     return super.close();
   }
 
   Future<void> closeToken();
 
-  Future<void> cancelPreviousRequest({CancelToken? cancelToken}) async {
-    if (cancelToken?.isCancelled == false) {
-      cancelToken?.cancel();
-    }
+  @override
+  void emit(State state) {
+    if (_isClosed || isClosed) return;
+    super.emit(state);
   }
 
-  bool isCancelled({CancelToken? cancelToken}) =>
-      cancelToken?.isCancelled ?? true;
-
-  bool isSuccess<T>(DataState<T> response) {
-    return response is DataSuccess;
-  }
+  bool isSuccess<T>(DataState<T> response) => response is DataSuccess<T>;
 }

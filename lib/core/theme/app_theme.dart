@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:torfin/core/theme/tools.dart';
 
+import '../../gen/fonts.gen.dart';
 import 'app_colors.dart';
 
 sealed class AppTheme {
@@ -8,13 +9,25 @@ sealed class AppTheme {
     useMaterial3: true,
     brightness: Brightness.light,
     extensions: [AppColorTheme.light],
+    fontFamily: FontFamily.lexend,
     scaffoldBackgroundColor: AppColorTheme.light.background,
+    splashFactory: NoSplash.splashFactory,
+    highlightColor: Colors.transparent,
+    splashColor: Colors.transparent,
+    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    visualDensity: VisualDensity.compact,
   );
   static final darkTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
     extensions: [AppColorTheme.dark],
+    fontFamily: FontFamily.lexend,
     scaffoldBackgroundColor: AppColorTheme.dark.background,
+    splashFactory: NoSplash.splashFactory,
+    highlightColor: Colors.transparent,
+    splashColor: Colors.transparent,
+    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    visualDensity: VisualDensity.compact,
   );
 }
 

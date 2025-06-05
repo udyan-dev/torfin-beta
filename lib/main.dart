@@ -20,17 +20,18 @@ Future<void> main() async {
   runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
-      // Set Device Orientation to Portrait
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown,
+
+      await Future.wait([
+        SystemChrome.setPreferredOrientations(const [
+          DeviceOrientation.portraitUp,
+          DeviceOrientation.portraitDown,
+        ]),
+        _setupFirebase(),
+        setupInjection()
       ]);
-      await _setupFirebase();
-      setup();
 
       runApp(const MainApp());
     },
-    // Handle all other errors
     (error, stack) => !kDebugMode
         ? FirebaseCrashlytics.instance.recordError(error, stack, fatal: true)
         : log(AppConstants.zoneErrorLog, error: error, stackTrace: stack),
@@ -38,16 +39,14 @@ Future<void> main() async {
 }
 
 Future<void> _setupFirebase() async {
-  // Firebase Initialize App
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   if (!kDebugMode) {
-    // Set up crashlytics, performance and analytics monitoring
-    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
-    await FirebasePerformance.instance.setPerformanceCollectionEnabled(true);
-    await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
-    // Capture Flutter framework errors
+    await Future.wait([
+      FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true),
+      FirebasePerformance.instance.setPerformanceCollectionEnabled(true),
+      FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true),
+    ]);
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
-    // Capture platform errors
     PlatformDispatcher.instance.onError = (error, stack) {
       FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
       return true;
@@ -60,18 +59,16 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
+    return ValueListenableBuilder<ThemeMode>(
       valueListenable: di<ThemeService>().themeMode,
-      builder: (context, themeMode, _) {
-        return MaterialApp.router(
-          debugShowCheckedModeBanner: false,
-          title: AppConstants.appTitle,
-          theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
-          themeMode: themeMode,
-          routerConfig: routerConfig,
-        );
-      },
+      builder: (context, themeMode, child) => MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        title: AppConstants.appTitle,
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: themeMode,
+        routerConfig: routerConfig,
+      ),
     );
   }
 }

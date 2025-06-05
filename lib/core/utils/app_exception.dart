@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 
+import '../constants/app_constants.dart';
+
 class AppException implements Exception {
   final AppExceptionType type;
   final String message;
@@ -23,46 +25,45 @@ class AppException implements Exception {
       case DioExceptionType.cancel:
         return AppException(
           type: AppExceptionType.cancel,
-          message: 'Request was cancelled by the user or system.',
+          message: AppConstants.requestCancelledMessage,
           statusCode: statusCode,
-          error: e.response, // Pass e.response to the error field
+          error: e.response,
         );
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.connectionError:
         return AppException(
           type: AppExceptionType.connectionTimeout,
-          message: 'Connection failed. Please check your internet connection.',
+          message: AppConstants.connectionFailedMessage,
           statusCode: statusCode,
-          error: e.response, // Pass e.response to the error field
+          error: e.response,
         );
       case DioExceptionType.sendTimeout:
         return AppException(
           type: AppExceptionType.sendTimeout,
-          message: 'Sending request failed. The server is not responding.',
+          message: AppConstants.sendTimeoutMessage,
           statusCode: statusCode,
-          error: e.response, // Pass e.response to the error field
+          error: e.response,
         );
       case DioExceptionType.receiveTimeout:
         return AppException(
           type: AppExceptionType.receiveTimeout,
-          message: 'Receive response failed. The server might be slow.',
+          message: AppConstants.receiveTimeoutMessage,
           statusCode: statusCode,
-          error: e.response, // Pass e.response to the error field
+          error: e.response,
         );
       case DioExceptionType.badResponse:
         return AppException(
           type: AppExceptionType.badResponse,
-          message: e.response?.statusMessage ?? 'Bad response from the server.',
+          message: e.response?.statusMessage ?? AppConstants.badResponseMessage,
           statusCode: statusCode,
-          error: e.response, // Pass e.response to the error field
+          error: e.response,
         );
       case DioExceptionType.badCertificate:
         return AppException(
           type: AppExceptionType.badCertificate,
-          message:
-              'Invalid SSL certificate. Please check the server configuration.',
+          message: AppConstants.badCertificateMessage,
           statusCode: statusCode,
-          error: e.response, // Pass e.response to the error field
+          error: e.response,
         );
       case DioExceptionType.unknown:
         return _handleUnknownError(e, statusCode);
@@ -70,38 +71,34 @@ class AppException implements Exception {
   }
 
   static AppException _handleUnknownError(DioException e, int? statusCode) {
-    // Handle network-related errors such as no internet or DNS issues
     if (e.error is SocketException) {
       return AppException(
         type: AppExceptionType.noInternet,
-        message: 'No internet connection. Please check your network settings.',
+        message: AppConstants.noInternetError,
         statusCode: statusCode,
-        error: e.response, // Pass e.response to the error field
+        error: e.response,
       );
     }
-    // Handle HttpException (e.g., DNS errors or unreachable host)
     if (e.error is HttpException) {
       return AppException(
         type: AppExceptionType.noInternet,
-        message: 'Unable to connect to the server. Please check your network.',
+        message: AppConstants.serverConnectionError,
         statusCode: statusCode,
-        error: e.response, // Pass e.response to the error field
+        error: e.response,
       );
     }
-    // Handle other unknown errors
     return AppException(
       type: AppExceptionType.unknown,
-      message: e.message ?? 'An unknown error occurred.',
+      message: e.message ?? AppConstants.unknownErrorMessage,
       statusCode: statusCode,
-      error: e.response, // Pass e.response to the error field
+      error: e.response,
     );
   }
 
-  // Factory method to handle parsing errors
   factory AppException.parseError({Object? error}) {
     return AppException(
       type: AppExceptionType.parseError,
-      message: 'Failed to parse data received from the server.',
+      message: AppConstants.parseDataError,
       error: error,
     );
   }

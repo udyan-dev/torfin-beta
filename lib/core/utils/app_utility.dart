@@ -6,25 +6,35 @@ import '../constants/app_constants.dart';
 import 'data_state.dart';
 
 sealed class AppUtility {
+  static const _successWidget = StatusWidget.success();
+  static const _errorWidget = StatusWidget.error();
+
+  static const _defaultMessages = {
+    DataEnum.initial: AppConstants.splashMessage,
+    DataEnum.loading: AppConstants.splashMessage,
+    DataEnum.success: AppConstants.success,
+    DataEnum.error: AppConstants.error,
+  };
+
   static Widget getLoadingWidgetByStatus(
     DataEnum status, {
     String? message,
     LoadingWidgetEnum loadingWidgetSize = LoadingWidgetEnum.small,
   }) {
+    final loadingMessage = message ?? _defaultMessages[status]!;
+
     return switch (status) {
       DataEnum.initial || DataEnum.loading => LoadingWidget(
-        loadingMessage: message ?? AppConstants.splashMessage,
+        loadingMessage: loadingMessage,
         type: loadingWidgetSize,
       ),
-      DataEnum.success => LoadingWidget(
-        loadingMessage: message ?? AppConstants.success,
-        leadingWidget: const StatusWidget.success(),
-        type: loadingWidgetSize,
+      DataEnum.success => const LoadingWidget(
+        loadingMessage: AppConstants.success,
+        leadingWidget: _successWidget,
       ),
-      DataEnum.error => LoadingWidget(
-        loadingMessage: message ?? AppConstants.error,
-        leadingWidget: const StatusWidget.error(),
-        type: loadingWidgetSize,
+      DataEnum.error => const LoadingWidget(
+        loadingMessage: AppConstants.error,
+        leadingWidget: _errorWidget,
       ),
     };
   }
