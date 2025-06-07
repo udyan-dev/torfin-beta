@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:torfin/core/utils/app_extensions.dart';
-import 'package:torfin/core/utils/network_dialog_mixin.dart';
+import 'package:go_router/go_router.dart';
+import 'package:torfin/shared/widgets/svg_button.dart';
 
 import '../../../../core/bindings/injection.dart';
 import '../../../../core/utils/app_utility.dart';
 import '../../../../core/utils/data_state.dart';
 import '../../../../gen/assets.gen.dart';
+import '../../../../shared/mixins/network_dialog_mixin.dart';
 import '../cubit/splash_cubit.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -38,47 +38,32 @@ class _SplashScreenState extends State<SplashScreen> with NetworkDialogMixin {
     return BlocProvider.value(
       value: _cubit,
       child: Scaffold(
-        body: BlocBuilder<SplashCubit, SplashState>(
+        body: BlocListener<SplashCubit, SplashState>(
           bloc: _cubit,
-          buildWhen: (previous, current) => previous.status != current.status,
-          builder: (context, state) => RepaintBoundary(
-            child: Center(
+          listener: (context, state) {
+            if (state.status == DataEnum.success) {
+              context.pushReplacementNamed('home');
+            }
+          },
+          child: BlocBuilder<SplashCubit, SplashState>(
+            bloc: _cubit,
+            buildWhen: (previous, current) => previous.status != current.status,
+            builder: (context, state) => Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   AppUtility.getLoadingWidgetByStatus(state.status),
                   if (state.status == DataEnum.error) ...[
-                    const SizedBox(height: 16),
-                    _RefreshButton(onPressed: _cubit.getToken),
+                    SvgButton(
+                      onPressed: _cubit.getToken,
+                      path: Assets.images.refresh.path,
+                    ),
                   ],
                 ],
               ),
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _RefreshButton extends StatelessWidget {
-  const _RefreshButton({required this.onPressed});
-
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = context.theme;
-
-    return IconButton(
-      onPressed: onPressed,
-      icon: SvgPicture.asset(
-        Assets.images.refresh.path,
-        colorFilter: ColorFilter.mode(
-          theme.iconPrimary,
-          BlendMode.srcIn,
-        ),
-        clipBehavior: Clip.none,
       ),
     );
   }

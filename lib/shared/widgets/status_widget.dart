@@ -4,6 +4,7 @@ import 'package:torfin/core/utils/app_extensions.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_theme.dart';
+import '../mixins/widget_cache_mixin.dart';
 
 enum StatusWidgetSize {
   small(16),
@@ -14,7 +15,7 @@ enum StatusWidgetSize {
   const StatusWidgetSize(this.value);
 }
 
-class StatusWidget extends StatelessWidget {
+class StatusWidget extends StatelessWidget with WidgetCacheMixin<StatusWidget> {
   const StatusWidget.success({
     super.key,
     this.size = StatusWidgetSize.small,
@@ -29,12 +30,15 @@ class StatusWidget extends StatelessWidget {
   final StatusWidgetSize size;
 
   @override
-  Widget build(BuildContext context) {
+  List<Object?> get cacheProperties => [type, size];
+
+  @override
+  Widget buildWidget(BuildContext context) {
     return _StatusIcon(type: type, size: size);
   }
 }
 
-class _StatusIcon extends StatelessWidget {
+class _StatusIcon extends StatelessWidget with WidgetCacheMixin<_StatusIcon> {
   const _StatusIcon({
     required this.type,
     required this.size,
@@ -50,7 +54,10 @@ class _StatusIcon extends StatelessWidget {
   };
 
   @override
-  Widget build(BuildContext context) {
+  List<Object?> get cacheProperties => [type, size];
+
+  @override
+  Widget buildWidget(BuildContext context) {
     final theme = context.theme;
     final iconPath = _iconPaths[type]!;
     final color = _getColor(theme);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/splash/presentation/screens/splash_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -20,6 +21,15 @@ final GoRouter routerConfig = GoRouter(
       pageBuilder: (context, state) => CustomTransitionPage(
         key: state.pageKey,
         child: const SplashScreen(),
+        transitionsBuilder: _buildSlideTransition,
+      ),
+    ),
+    GoRoute(
+      name: "home",
+      path: "/home",
+      pageBuilder: (context, state) => CustomTransitionPage(
+        key: state.pageKey,
+        child: const HomeScreen(),
         transitionsBuilder: _buildSlideTransition,
       ),
     ),

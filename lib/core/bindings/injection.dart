@@ -15,26 +15,34 @@ final di = GetIt.instance;
 
 Future<void> setupInjection() async {
   di.registerSingleton<Dio>(
-      Dio(), instanceName: AppConstants.generalDioInstance);
+    Dio(),
+    instanceName: AppConstants.generalDioInstance,
+  );
   di.registerSingleton<Dio>(
-      Dio(AppConstants.tokenClientBaseOptions),
-      instanceName: AppConstants.tokenClientDioInstance);
+    Dio(AppConstants.tokenClientBaseOptions),
+    instanceName: AppConstants.tokenClientDioInstance,
+  );
   di.registerSingleton<StorageService>(StorageService());
   final networkService = NetworkService();
-  networkService.initialize();
   di.registerSingleton<NetworkService>(
-      networkService, dispose: (s) => s.dispose());
-
+    networkService,
+    dispose: (s) => s.dispose(),
+  );
   final themeService = ThemeService(storageService: di<StorageService>());
-  await themeService.initialize();
   di.registerSingleton<ThemeService>(themeService, dispose: (s) => s.dispose());
-
   di.registerSingleton<TokenClient>(
-      TokenClient(di<Dio>(instanceName: AppConstants.tokenClientDioInstance)));
+    TokenClient(di<Dio>(instanceName: AppConstants.tokenClientDioInstance)),
+  );
   di.registerSingleton<TokenRepository>(
-      TokenRepositoryImpl(tokenClient: di<TokenClient>()));
-  di.registerSingleton<GetTokenUseCase>(GetTokenUseCase(
+    TokenRepositoryImpl(tokenClient: di<TokenClient>()),
+  );
+  di.registerSingleton<GetTokenUseCase>(
+    GetTokenUseCase(
       tokenRepository: di<TokenRepository>(),
-      storageService: di<StorageService>()));
+      storageService: di<StorageService>(),
+    ),
+  );
   di.registerFactory(() => SplashCubit(getTokenUseCase: di<GetTokenUseCase>()));
+
+  await Future.wait([networkService.initialize(), themeService.initialize()]);
 }

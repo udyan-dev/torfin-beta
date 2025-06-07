@@ -12,6 +12,12 @@ sealed class AppConstants {
   static const String tokenKey = "TOKEN";
   static const String themeKey = "THEME";
 
+  // Navigation labels
+  static const String searchLabel = "Search";
+  static const String downloadsLabel = "Downloads";
+  static const String favoriteLabel = "Favorite";
+  static const String settingsLabel = "Settings";
+
   // Asset paths
   static const String checkmarkIcon = "assets/images/checkmark_filled.svg";
   static const String errorIcon = "assets/images/error_filled.svg";

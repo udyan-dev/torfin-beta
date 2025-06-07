@@ -18,11 +18,23 @@ class $AssetsImagesGen {
   /// File path: assets/images/checkmark_filled.svg
   SvgGenImage get checkmarkFilled => const SvgGenImage('assets/images/checkmark_filled.svg');
 
+  /// File path: assets/images/download.svg
+  SvgGenImage get download => const SvgGenImage('assets/images/download.svg');
+
   /// File path: assets/images/error_filled.svg
   SvgGenImage get errorFilled => const SvgGenImage('assets/images/error_filled.svg');
 
+  /// File path: assets/images/favorite.svg
+  SvgGenImage get favorite => const SvgGenImage('assets/images/favorite.svg');
+
   /// File path: assets/images/refresh.svg
   SvgGenImage get refresh => const SvgGenImage('assets/images/refresh.svg');
+
+  /// File path: assets/images/search.svg
+  SvgGenImage get search => const SvgGenImage('assets/images/search.svg');
+
+  /// File path: assets/images/settings.svg
+  SvgGenImage get settings => const SvgGenImage('assets/images/settings.svg');
 
   /// File path: assets/images/splash.png
   AssetGenImage get splash => const AssetGenImage('assets/images/splash.png');
@@ -31,7 +43,17 @@ class $AssetsImagesGen {
   AssetGenImage get splash12 => const AssetGenImage('assets/images/splash12.png');
 
   /// List of all assets
-  List<dynamic> get values => [checkmarkFilled, errorFilled, refresh, splash, splash12];
+  List<dynamic> get values => [
+    checkmarkFilled,
+    download,
+    errorFilled,
+    favorite,
+    refresh,
+    search,
+    settings,
+    splash,
+    splash12,
+  ];
 }
 
 class Assets {

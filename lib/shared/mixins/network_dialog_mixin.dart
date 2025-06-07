@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
+import '../../core/bindings/injection.dart';
+import '../../core/constants/app_constants.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/utils/app_extensions.dart';
 import '../../gen/fonts.gen.dart';
-import '../../shared/services/network_service.dart';
-import '../../shared/widgets/status_widget.dart';
-import '../../shared/widgets/text_widget.dart';
-import '../bindings/injection.dart';
-import '../constants/app_constants.dart';
-import '../theme/app_colors.dart';
-import 'app_extensions.dart';
+import '../services/network_service.dart';
+import '../widgets/status_widget.dart';
+import '../widgets/text_widget.dart';
 
 mixin NetworkDialogMixin<T extends StatefulWidget> on State<T> {
   static final NetworkService _networkService = di<NetworkService>();
@@ -68,37 +69,45 @@ mixin NetworkDialogMixin<T extends StatefulWidget> on State<T> {
       barrierDismissible: false,
       barrierColor: theme.overlay,
       builder: (_) =>
-          Dialog(
-            alignment: Alignment.bottomCenter,
-            elevation: 0,
-            insetPadding: EdgeInsets.zero,
-            child: ColoredBox(
-              color: backgroundColor,
-              child: Row(
-                children: [
-                  SizedBox(
-                    height: kMinInteractiveDimension,
-                    child: VerticalDivider(
-                      width: 3,
-                      thickness: 3,
-                      color: dividerColor,
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                  const StatusWidget.error(size: StatusWidgetSize.medium),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: TextWidget(
-                      text: message,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: theme.textPrimary,
-                        fontFamily: FontFamily.lexend,
-                        fontWeight: FontWeight.w600,
+          PopScope(
+            canPop: false,
+            onPopInvokedWithResult: (didPop, result) {
+              if (!didPop) {
+                SystemNavigator.pop();
+              }
+            },
+            child: Dialog(
+              alignment: Alignment.bottomCenter,
+              elevation: 0,
+              insetPadding: EdgeInsets.zero,
+              child: ColoredBox(
+                color: backgroundColor,
+                child: Row(
+                  children: [
+                    SizedBox(
+                      height: kMinInteractiveDimension,
+                      child: VerticalDivider(
+                        width: 3,
+                        thickness: 3,
+                        color: dividerColor,
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 14),
+                    const StatusWidget.error(size: StatusWidgetSize.medium),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: TextWidget(
+                        text: message,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: theme.textPrimary,
+                          fontFamily: FontFamily.lexend,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

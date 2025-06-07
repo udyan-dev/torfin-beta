@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-class TextWidget extends StatelessWidget {
+import '../mixins/widget_cache_mixin.dart';
+
+class TextWidget extends StatelessWidget with WidgetCacheMixin<TextWidget> {
   const TextWidget({
     super.key,
     required this.text,
@@ -17,7 +19,10 @@ class TextWidget extends StatelessWidget {
   final TextAlign? textAlign;
 
   @override
-  Widget build(BuildContext context) {
+  List<Object?> get cacheProperties => [text, style, maxLines, overflow, textAlign];
+
+  @override
+  Widget buildWidget(BuildContext context) {
     return Text(
       text,
       style: style,

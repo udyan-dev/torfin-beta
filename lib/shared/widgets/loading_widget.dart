@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:torfin/core/utils/app_extensions.dart';
 
+import '../mixins/widget_cache_mixin.dart';
 import 'text_widget.dart';
 
 enum LoadingWidgetEnum {
@@ -13,7 +14,7 @@ enum LoadingWidgetEnum {
   const LoadingWidgetEnum({required this.constraints});
 }
 
-class LoadingWidget extends StatelessWidget {
+class LoadingWidget extends StatelessWidget with WidgetCacheMixin<LoadingWidget> {
   const LoadingWidget({
     super.key,
     this.type = LoadingWidgetEnum.small,
@@ -26,7 +27,10 @@ class LoadingWidget extends StatelessWidget {
   final Widget? leadingWidget;
 
   @override
-  Widget build(BuildContext context) {
+  List<Object?> get cacheProperties => [type, loadingMessage, leadingWidget];
+
+  @override
+  Widget buildWidget(BuildContext context) {
     final hasMessage = loadingMessage.isNotEmpty;
 
     return Align(
@@ -43,13 +47,16 @@ class LoadingWidget extends StatelessWidget {
   }
 }
 
-class _OptimizedProgressIndicator extends StatelessWidget {
+class _OptimizedProgressIndicator extends StatelessWidget with WidgetCacheMixin<_OptimizedProgressIndicator> {
   const _OptimizedProgressIndicator({required this.type});
 
   final LoadingWidgetEnum type;
 
   @override
-  Widget build(BuildContext context) {
+  List<Object?> get cacheProperties => [type];
+
+  @override
+  Widget buildWidget(BuildContext context) {
     final theme = context.theme;
     final size = type.constraints.maxWidth;
 
@@ -66,13 +73,16 @@ class _OptimizedProgressIndicator extends StatelessWidget {
   }
 }
 
-class _LoadingText extends StatelessWidget {
+class _LoadingText extends StatelessWidget with WidgetCacheMixin<_LoadingText> {
   const _LoadingText({required this.text});
 
   final String text;
 
   @override
-  Widget build(BuildContext context) {
+  List<Object?> get cacheProperties => [text];
+
+  @override
+  Widget buildWidget(BuildContext context) {
     final theme = context.theme;
 
     return TextWidget(
